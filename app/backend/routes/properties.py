@@ -69,18 +69,17 @@ def create_property():
                 return jsonify({'error': f'{field} is required'}), 400
         
         # Create property
-        property = Property(
-            user_id=current_user.id,
-            name=data['name'],
-            address=data['address'],
-            purchase_price=data['purchase_price'],
-            down_payment=data['down_payment'],
-            loan_amount=data['loan_amount'],
-            interest_rate=data['interest_rate'],
-            loan_term_years=data['loan_term_years'],
-            monthly_rent=data['monthly_rent'],
-            monthly_expenses=data.get('monthly_expenses', {})
-        )
+        property = Property()
+        property.user_id = current_user.id
+        property.name = data['name']
+        property.address = data['address']
+        property.purchase_price = data['purchase_price']
+        property.down_payment = data['down_payment']
+        property.loan_amount = data['loan_amount']
+        property.interest_rate = data['interest_rate']
+        property.loan_term_years = data['loan_term_years']
+        property.monthly_rent = data['monthly_rent']
+        property.monthly_expenses = data.get('monthly_expenses', {})
         
         db.session.add(property)
         db.session.commit()

@@ -102,7 +102,7 @@ class MonteCarloSimulator:
             'summary': self._generate_summary(statistics, risk_metrics)
         }
     
-    def _run_single_simulation(self, years: int) -> Dict[str, float]:
+    def _run_single_simulation(self, years: int) -> Dict[str, Any]:
         """Run a single simulation scenario"""
         
         # Initialize variables

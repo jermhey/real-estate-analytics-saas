@@ -52,7 +52,7 @@ class User(UserMixin, db.Model):
             'full_name': self.full_name,
             'subscription_tier': self.subscription_tier,
             'created_at': self.created_at.isoformat(),
-            'properties_count': len(self.properties)
+            'properties_count': self.properties.count()
         }
 
 class Property(db.Model):

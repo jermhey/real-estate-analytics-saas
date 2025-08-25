@@ -71,12 +71,11 @@ def register():
             return jsonify({'error': 'Email already registered'}), 409
         
         # Create new user
-        user = User(
-            email=email,
-            first_name=first_name,
-            last_name=last_name,
-            password_hash=pbkdf2_sha256.hash(password)
-        )
+        user = User()
+        user.email = email
+        user.first_name = first_name
+        user.last_name = last_name
+        user.password_hash = pbkdf2_sha256.hash(password)
         
         db.session.add(user)
         db.session.commit()

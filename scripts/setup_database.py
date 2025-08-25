@@ -48,16 +48,14 @@ def setup_database():
             admin_email = os.getenv('ADMIN_EMAIL')
             if admin_email:
                 print(f"\n👤 Creating admin user: {admin_email}")
-                
                 from passlib.hash import pbkdf2_sha256
                 
-                admin_user = User(
-                    email=admin_email,
-                    first_name="Admin",
-                    last_name="User",
-                    password_hash=pbkdf2_sha256.hash("admin123"),
-                    subscription_tier="enterprise"
-                )
+                admin_user = User()
+                admin_user.email = admin_email
+                admin_user.first_name = "Admin"
+                admin_user.last_name = "User"
+                admin_user.password_hash = pbkdf2_sha256.hash("admin123")
+                admin_user.subscription_tier = "enterprise"
                 
                 db.session.add(admin_user)
                 db.session.commit()

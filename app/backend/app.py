@@ -51,7 +51,7 @@ def create_app(config_name='development'):
     CORS(app, origins=["http://localhost:8502", "http://127.0.0.1:8502"])  # Allow Streamlit frontend
     
     # Login manager configuration
-    login_manager.login_view = 'auth.login'
+    login_manager.login_view = 'auth.login'  # type: ignore
     login_manager.login_message = 'Please log in to access this page.'
     login_manager.login_message_category = 'info'
     
