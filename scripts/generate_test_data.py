@@ -153,13 +153,12 @@ def create_sample_users():
             created_users.append(existing_user)
             continue
         
-        user = User(
-            email=user_data["email"],
-            first_name=user_data["first_name"],
-            last_name=user_data["last_name"],
-            password_hash=pbkdf2_sha256.hash("password123"),
-            subscription_tier=user_data["subscription_tier"]
-        )
+        user = User()
+        user.email = user_data["email"]
+        user.first_name = user_data["first_name"]
+        user.last_name = user_data["last_name"]
+        user.password_hash = pbkdf2_sha256.hash("password123")
+        user.subscription_tier = user_data["subscription_tier"]
         
         db.session.add(user)
         created_users.append(user)
@@ -189,18 +188,17 @@ def create_sample_properties(users):
             created_properties.append(existing_property)
             continue
         
-        property_obj = Property(
-            user_id=user.id,
-            name=property_data["name"],
-            address=property_data["address"],
-            purchase_price=Decimal(str(property_data["purchase_price"])),
-            down_payment=Decimal(str(property_data["down_payment"])),
-            loan_amount=Decimal(str(property_data["loan_amount"])),
-            interest_rate=Decimal(str(property_data["interest_rate"])),
-            loan_term_years=property_data["loan_term_years"],
-            monthly_rent=Decimal(str(property_data["monthly_rent"])),
-            monthly_expenses=property_data["monthly_expenses"]
-        )
+        property_obj = Property()
+        property_obj.user_id = user.id
+        property_obj.name = property_data["name"]
+        property_obj.address = property_data["address"]
+        property_obj.purchase_price = Decimal(str(property_data["purchase_price"]))
+        property_obj.down_payment = Decimal(str(property_data["down_payment"]))
+        property_obj.loan_amount = Decimal(str(property_data["loan_amount"]))
+        property_obj.interest_rate = Decimal(str(property_data["interest_rate"]))
+        property_obj.loan_term_years = property_data["loan_term_years"]
+        property_obj.monthly_rent = Decimal(str(property_data["monthly_rent"]))
+        property_obj.monthly_expenses = property_data["monthly_expenses"]
         
         db.session.add(property_obj)
         created_properties.append(property_obj)
@@ -267,18 +265,17 @@ def generate_additional_properties(users, count=10):
             "other_expenses": int(monthly_rent * random.uniform(0.02, 0.08))
         }
         
-        property_obj = Property(
-            user_id=user.id,
-            name=f"{property_type} #{i+1}",
-            address=f"{random.randint(100, 9999)} {street}, {city}, TX {zip_code}",
-            purchase_price=Decimal(str(purchase_price)),
-            down_payment=Decimal(str(down_payment)),
-            loan_amount=Decimal(str(loan_amount)),
-            interest_rate=Decimal(str(interest_rate)),
-            loan_term_years=random.choice([15, 20, 30]),
-            monthly_rent=Decimal(str(monthly_rent)),
-            monthly_expenses=expenses
-        )
+        property_obj = Property()
+        property_obj.user_id = user.id
+        property_obj.name = f"{property_type} #{i+1}"
+        property_obj.address = f"{random.randint(100, 9999)} {street}, {city}, TX {zip_code}"
+        property_obj.purchase_price = Decimal(str(purchase_price))
+        property_obj.down_payment = Decimal(str(down_payment))
+        property_obj.loan_amount = Decimal(str(loan_amount))
+        property_obj.interest_rate = Decimal(str(interest_rate))
+        property_obj.loan_term_years = random.choice([15, 20, 30])
+        property_obj.monthly_rent = Decimal(str(monthly_rent))
+        property_obj.monthly_expenses = expenses
         
         db.session.add(property_obj)
         

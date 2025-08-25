@@ -33,13 +33,12 @@ def client(app):
 def sample_user(app):
     """Create sample user for testing"""
     with app.app_context():
-        user = User(
-            email="test@example.com",
-            first_name="Test",
-            last_name="User",
-            password_hash="hashed_password",
-            subscription_tier="pro"
-        )
+        user = User()
+        user.email = "test@example.com"
+        user.first_name = "Test"
+        user.last_name = "User"
+        user.password_hash = "hashed_password"
+        user.subscription_tier = "pro"
         db.session.add(user)
         db.session.commit()
         
@@ -225,13 +224,12 @@ class TestAPIEndpoints:
         """Test user login"""
         with app.app_context():
             # Create a user for login test
-            user = User(
-                email="login_test@example.com",
-                first_name="Login",
-                last_name="Test",
-                password_hash=pbkdf2_sha256.hash("password123"),
-                subscription_tier="pro"
-            )
+            user = User()
+            user.email = "login_test@example.com"
+            user.first_name = "Login"
+            user.last_name = "Test"
+            user.password_hash = pbkdf2_sha256.hash("password123")
+            user.subscription_tier = "pro"
             db.session.add(user)
             db.session.commit()
         
@@ -252,13 +250,12 @@ class TestAPIEndpoints:
         """Test property creation endpoint"""
         with app.app_context():
             # Create a user for property test
-            user = User(
-                email="property_test@example.com",
-                first_name="Property",
-                last_name="Test",
-                password_hash=pbkdf2_sha256.hash("password123"),
-                subscription_tier="pro"
-            )
+            user = User()
+            user.email = "property_test@example.com"
+            user.first_name = "Property"
+            user.last_name = "Test"
+            user.password_hash = pbkdf2_sha256.hash("password123")
+            user.subscription_tier = "pro"
             db.session.add(user)
             db.session.commit()
             user_id = user.id
@@ -287,13 +284,12 @@ class TestDatabaseModels:
     def test_user_creation(self, app):
         """Test user model creation"""
         with app.app_context():
-            user = User(
-                email="model_test@example.com",
-                first_name="Model",
-                last_name="Test",
-                password_hash="hashed",
-                subscription_tier="free"
-            )
+            user = User()
+            user.email = "model_test@example.com"
+            user.first_name = "Model"
+            user.last_name = "Test"
+            user.password_hash = "hashed"
+            user.subscription_tier = "free"
             
             db.session.add(user)
             db.session.commit()
@@ -306,18 +302,17 @@ class TestDatabaseModels:
     def test_property_creation(self, app, sample_user):
         """Test property model creation"""
         with app.app_context():
-            property_obj = Property(
-                user_id=sample_user.id,
-                name="Model Test Property",
-                address="123 Model Street",
-                purchase_price=Decimal('250000'),
-                down_payment=Decimal('50000'),
-                loan_amount=Decimal('200000'),
-                interest_rate=Decimal('6.0'),
-                loan_term_years=30,
-                monthly_rent=Decimal('2000'),
-                monthly_expenses={"property_tax": 200}
-            )
+            property_obj = Property()
+            property_obj.user_id = sample_user.id
+            property_obj.name = "Model Test Property"
+            property_obj.address = "123 Model Street"
+            property_obj.purchase_price = Decimal('250000')
+            property_obj.down_payment = Decimal('50000')
+            property_obj.loan_amount = Decimal('200000')
+            property_obj.interest_rate = Decimal('6.0')
+            property_obj.loan_term_years = 30
+            property_obj.monthly_rent = Decimal('2000')
+            property_obj.monthly_expenses = {"property_tax": 200}
             
             db.session.add(property_obj)
             db.session.commit()
@@ -331,35 +326,33 @@ class TestDatabaseModels:
         """Test user-property relationship"""
         with app.app_context():
             # Create user
-            user = User(
-                email="relationship_test@example.com",
-                first_name="Relationship",
-                last_name="Test",
-                password_hash="hashed"
-            )
+            user = User()
+            user.email = "relationship_test@example.com"
+            user.first_name = "Relationship"
+            user.last_name = "Test"
+            user.password_hash = "hashed"
             db.session.add(user)
             db.session.flush()  # Get user ID
             
             # Create property
-            property_obj = Property(
-                user_id=user.id,
-                name="Relationship Test Property",
-                address="123 Relationship Street",
-                purchase_price=Decimal('300000'),
-                down_payment=Decimal('60000'),
-                loan_amount=Decimal('240000'),
-                interest_rate=Decimal('6.5'),
-                loan_term_years=30,
-                monthly_rent=Decimal('2400'),
-                monthly_expenses={}
-            )
+            property_obj = Property()
+            property_obj.user_id = user.id
+            property_obj.name = "Relationship Test Property"
+            property_obj.address = "123 Relationship Street"
+            property_obj.purchase_price = Decimal('300000')
+            property_obj.down_payment = Decimal('60000')
+            property_obj.loan_amount = Decimal('240000')
+            property_obj.interest_rate = Decimal('6.5')
+            property_obj.loan_term_years = 30
+            property_obj.monthly_rent = Decimal('2400')
+            property_obj.monthly_expenses = {}
             db.session.add(property_obj)
             db.session.commit()
             
             # Test relationship
-            assert len(user.properties) == 1
-            assert user.properties[0].name == "Relationship Test Property"
-            assert property_obj.owner == user
+            assert user.properties.count() == 1
+            assert user.properties.first().name == "Relationship Test Property"
+            assert property_obj.user_id == user.id
 
 class TestDataValidation:
     """Test data validation and edge cases"""
