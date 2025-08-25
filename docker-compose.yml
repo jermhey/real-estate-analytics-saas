@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: real_estate_db
+    environment:
+      POSTGRES_DB: real_estate_saas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # Redis for caching and sessions
+  redis:
+    image: redis:7-alpine
+    container_name: real_estate_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+  # Flask Backend API
+  backend:
+    build: .
+    container_name: real_estate_backend
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres123@postgres:5432/real_estate_saas
+      REDIS_URL: redis://redis:6379/0
+      FLASK_ENV: production
+      SECRET_KEY: your-production-secret-key
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - redis
+    volumes:
+      - ./logs:/app/logs
+    networks:
+      - app-network
+    command: ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "4", "app.backend.app:create_app()"]
+
+  # Streamlit Frontend
+  frontend:
+    build: .
+    container_name: real_estate_frontend
+    environment:
+      API_BASE_URL: http://backend:5000/api
+    ports:
+      - "8501:8501"
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    command: ["streamlit", "run", "app/frontend/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    container_name: real_estate_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./docker/ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+
+networks:
+  app-network:
+    driver: bridge
