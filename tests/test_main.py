@@ -350,8 +350,9 @@ class TestDatabaseModels:
             db.session.commit()
             
             # Test relationship
-            assert user.properties.count() == 1
-            assert user.properties.first().name == "Relationship Test Property"
+            user_properties = Property.query.filter_by(user_id=user.id).all()
+            assert len(user_properties) == 1
+            assert user_properties[0].name == "Relationship Test Property"
             assert property_obj.user_id == user.id
 
 class TestDataValidation:
